@@ -110,8 +110,9 @@ function OrderFreight({ getOrderData, formikProps }) {
         } = response.data
 
         const orderDetails = Orders[0].OrderDetails
-        //console.log(orderDetails)
-        setOrderList(orderDetails)
+    
+        //setOrderList(orderDetails)
+        setRerenderOrderList(orderDetails)
         orderList.map((order) => {
           VENDOR_LIST.map((vendor, index) => {
             const code = order.ProductCode[0].toString()
@@ -121,7 +122,9 @@ function OrderFreight({ getOrderData, formikProps }) {
             }
           })
         })
-
+        console.log(orderList, '>> orderList');
+        console.log(rerenderOrderList, '>> rerenderOrderList');
+        console.log(orderDetails, '>> orderDetails');
         
         // *** order Detail ***
         const productCodeN = Orders[0].OrderDetails[0].ProductCode[0]
