@@ -15,15 +15,17 @@ module.exports.getOrders = async (req, res, next) => {
 // single order
 module.exports.getOrderById = async (req, res, next) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
+    console.log(id);
     const url = `${process.env.URL}${id}`;
+    //const url = `${process.env.URL}32424`;
     //const url = 'https://jsonplaceholder.typicode.com/users';
     
     // Make the GET request
     axios.get(url)
     .then(response => {
       // Handle successful response
-      console.log('Response data:', response.data);
+      //console.log('Response data:', response.data);
       const xmlData = response.data
       const parser = new xml2js.Parser();
       parser.parseString(xmlData, (err, result) => {
@@ -31,8 +33,8 @@ module.exports.getOrderById = async (req, res, next) => {
           console.error('Error parsing XML:', err);
         } else {
           const orderJson = JSON.stringify(result, null, 2);
-          res.status(200).send(orderJson)
-          console.log(orderJson);
+          console.log(orderJson, '>> orderJson');
+          res.status(200).send(orderJson);
         }
       });
     })

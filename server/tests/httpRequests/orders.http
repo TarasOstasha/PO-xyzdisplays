@@ -6,6 +6,9 @@ GET http://www.xyzDisplays.com/net/WebService.aspx?Login=ekorchman@gmail.com&Enc
 ### 200 {}
 GET http://www.xyzDisplays.com/net/WebService.aspx?Login=tonyjoss1990@gmail.com&EncryptedPassword=86C6BA587D1DB3646371062857A2C8510D874FD14F378B9CFD873F736130DE95&EDI_Name=Generic\Products&SELECT_Columns=p.Photos_Cloned_From,p.ProductID,pe.FreeShippingItem
 
+### 200 {}
+http://www.xyzDisplays.com/net/WebService.aspx?Login=tonyjoss1990@gmail.com&EncryptedPassword=86C6BA587D1DB3646371062857A2C8510D874FD14F378B9CFD873F736130DE95&EDI_Name=Generic\Orders&SELECT_Columns=o.OrderID,o.ShipAddress1,o.ShipAddress2,o.ShipCity,o.ShipCompanyName,o.ShipCountry,o.ShipPostalCode,od.ProductCode,od.ProductName,od.ProductPrice,od.Quantity,od.TotalPrice,od.Vendor_Price&WHERE_Column=o.OrderID&WHERE_Value=32414
+
 
 
 

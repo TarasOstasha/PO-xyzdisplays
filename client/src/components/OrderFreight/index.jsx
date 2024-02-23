@@ -7,12 +7,13 @@ import { ORDER_VALIDATION_SCHEMA } from '../../utils/orderValidationSchema'
 import { useEffect, useState } from 'react'
 
 import { VENDOR_LIST } from '../../utils/vendorsData'
-import { yellow, descriptionWidth } from '../../stylesConstants'
+import { yellow, descriptionWidth, attension } from '../../stylesConstants'
 
 function OrderFreight({ getOrderData, formikProps }) {
   const [orderId, setOrderId] = useState('')
   // *** order Detail ***
-  const [orderList, setOrderList] = useState([])
+  const [orderList, setOrderList] = useState([]) // first time fetching data
+  const [rerenderOrderList, setRerenderOrderList] = useState([]) // rerender when inserting discount value to our object
   const [productCode, setProductCode] = useState('')
   const [productQuantity, setproductQuantity] = useState('')
   const [totalPrice, setTotalPrice] = useState('')
@@ -95,8 +96,9 @@ function OrderFreight({ getOrderData, formikProps }) {
     }
   }
 
+  let discountRenderFlag = false
   useEffect(() => {
-    console.log(orderList.length, 'orderList')
+    //console.log(orderList.length, 'orderList')
     if (orderId.length < 5) {
       return
     }
@@ -108,16 +110,19 @@ function OrderFreight({ getOrderData, formikProps }) {
         } = response.data
 
         const orderDetails = Orders[0].OrderDetails
-        console.log(orderDetails)
+        //console.log(orderDetails)
         setOrderList(orderDetails)
-        orderList.map((order) =>
-          console.log(
-            order.ProductCode[0],
-            order.ProductName[0],
-            order.Vendor_Price[0],
-          ),
-        )
-        //console.log(orderList)
+        orderList.map((order) => {
+          VENDOR_LIST.map((vendor, index) => {
+            const code = order.ProductCode[0].toString()
+            if (code.toLowerCase().startsWith(vendor.code)) {
+              order.discount = [vendor.discount]
+              setRerenderOrderList(orderList) // rerender data
+            }
+          })
+        })
+
+        
         // *** order Detail ***
         const productCodeN = Orders[0].OrderDetails[0].ProductCode[0]
         const productsQuantityN = Orders[0].OrderDetails[0].Quantity[0]
@@ -146,6 +151,8 @@ function OrderFreight({ getOrderData, formikProps }) {
         console.error('GET Error:', error)
       })
   }, [orderId])
+
+  
 
   return (
     <div className={styles.orderWrapper}>
@@ -366,48 +373,42 @@ function OrderFreight({ getOrderData, formikProps }) {
               </thead>
               <tbody>
                 {/* {JSON.stringify(orderList, null, 2)} */}
-                {orderList.length !== 0 &&
-                  orderList.map((o, i) => (
+                {rerenderOrderList.length !== 0 &&
+                  rerenderOrderList.map((o, i) => (
                     <tr key={i}>
                       <td>{o.ProductCode?.[0]}</td>
-                      <td>{o.ProductName?.[0]}</td>
+                      <td style={descriptionWidth}>{o.ProductName?.[0]}</td>
                       <td>{o.Quantity?.[0]}</td>
-                      {/* <td>{`$${Number(o.Vendor_Price?.[0]).toFixed(2)}`}</td> */}
-                      <td>{isNaN(Number(o.Vendor_Price?.[0])) ? '': `$${Number(o.Vendor_Price?.[0]).toFixed(2)}` }</td>
-                      <td> Calculate discounted price here  </td>
-                      <td>  Calculate amount here  </td>
+                      <td>
+                        {isNaN(Number(o.Vendor_Price?.[0]))
+                          ? ''
+                          : `$${Number(o.Vendor_Price?.[0]).toFixed(2)}`}
+                      </td>
+                      <td>
+                        {isNaN(Number(o.Vendor_Price?.[0])) ||
+                        isNaN(Number(o.discount))
+                          ? <b style={attension}>Please pay attension on this item</b>
+                          : `$${(o.Vendor_Price?.[0] * o.discount).toFixed(2)}`}
+                      </td>
+                      <td>
+                        {o.Vendor_Price?.[0] && o.discount && o.Quantity?.[0]
+                          ? `${(
+                              o.Vendor_Price?.[0] *
+                              o.discount *
+                              o.Quantity?.[0]
+                            ).toFixed(2)}`
+                          : ''}
+                      </td>
                     </tr>
                   ))}
-                {/* {orderList.map((o, i) => (
-                  <tr key={i}>
-                    <td >{o.ProductCode[0]}</td>
-                    <td >{o.ProductName[0]}</td>
-                    <td >{o.Vendor_Price[0]}</td>
-                    <td>discounted price</td>
-                    <td>amount</td>
-                  </tr>
-                ))} */}
-                <tr>
-                  {/* {orderList.map((p, i) => (
-                    <td key={i}>{p.productCode}</td>
-                  ))} */}
-                  <td>{productCode}</td>
-                  <td style={descriptionWidth}>{productName}</td>
-                  <td>{productQuantity}</td>
-                  <td>{`$${Number(vendorPrice).toFixed(2)}`}</td>
-                  <td>{`$${Number(
-                    vendorPrice * formikProps.values.vedorDiscount,
-                  ).toFixed(2)}`}</td>
-                  <td>{`$${Number(
-                    vendorPrice *
-                      formikProps.values.vedorDiscount *
-                      productQuantity,
-                  ).toFixed(2)}`}</td>
-                </tr>
                 <tr className="table-success">
                   <td colSpan="4"></td>
-                  <td>Total Amount:</td>
-                  <td>$0.00</td>
+                  <td>Total Amount: </td>
+                  <td>
+                    {
+                      
+                    }
+                  </td>
                 </tr>
               </tbody>
             </table>
