@@ -5,9 +5,12 @@ import { yellow, descriptionWidth, attension } from '../../stylesConstants'
 
 
 import styles from './OrderFreightForm.module.scss';
+import { useEffect } from 'react';
 
-function OrderFreightForm ({ setOrderId, shipCompanyName, shippingAddress1, shipCity, shipCountry, shipPostalCode, rerenderOrderList }) {
-
+function OrderFreightForm ({ setOrderId, shipCompanyName, shippingAddress1, shipCity, shipCountry, shipPostalCode, rerenderOrderList  }) {
+  const handleToRemove = (i) => {
+    console.log(i)
+  }
 
   const initialValues = {
     po: '',
@@ -26,6 +29,8 @@ function OrderFreightForm ({ setOrderId, shipCompanyName, shippingAddress1, ship
     console.log('values :>> ', values)
     formikBag.resetForm()
   }
+
+
   return (
     <div>
       <Formik
@@ -194,10 +199,11 @@ function OrderFreightForm ({ setOrderId, shipCompanyName, shippingAddress1, ship
                   <th scope='col'>Cost per Unit (USD)</th>
                   <th scope='col'>Discounted Cost per Unit (USD)</th>
                   <th scope='col'>Amount (USD)</th>
+                  <th scope='col'></th>
                 </tr>
               </thead>
               <tbody>
-                {/* {JSON.stringify(orderList, null, 2)} */}
+                {/* {JSON.stringify(rerenderOrderList, null, 2)} */}
                 {rerenderOrderList.length !== 0 &&
                   rerenderOrderList.map((o, i) => (
                     <tr key={i}>
@@ -226,12 +232,15 @@ function OrderFreightForm ({ setOrderId, shipCompanyName, shippingAddress1, ship
                             ).toFixed(2)}`
                           : ''}
                       </td>
+                      <td><button onClick={() => handleToRemove(i)} type="button" className="btn btn-danger">Remove</button></td>
+                      <td>{i}</td>
                     </tr>
                   ))}
                 <tr className='table-success'>
                   <td colSpan='4'></td>
                   <td>Total Amount: </td>
                   <td>{}</td>
+                  <td></td>
                 </tr>
               </tbody>
             </table>
